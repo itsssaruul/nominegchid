@@ -6,7 +6,13 @@
     <title>Номин эгчид зориулав</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             display: flex;
             justify-content: center;
@@ -19,8 +25,8 @@
             text-align: center;
             overflow: hidden;
             position: relative;
-            padding: 20px;
         }
+
         .envelope {
             width: 220px;
             height: 160px;
@@ -29,6 +35,7 @@
             cursor: pointer;
             transition: transform 0.5s;
         }
+
         .envelope::before {
             content: '';
             position: absolute;
@@ -39,6 +46,7 @@
             background: #ff6b81;
             clip-path: polygon(0 0, 100% 0, 50% 60%);
         }
+
         .message-card {
             display: none;
             background: linear-gradient(135deg, #ffe0e9, #ffd1dc);
@@ -47,9 +55,17 @@
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(255, 182, 193, 0.5);
             max-width: 90vw;
+            width: 350px;
             text-align: center;
             border: 2px solid #ffafbd;
+
+            /* Centering Fix */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
+
         .star {
             position: absolute;
             width: 12px;
@@ -59,10 +75,12 @@
             cursor: pointer;
             animation: twinkle 2s infinite;
         }
+
         @keyframes twinkle {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; transform: scale(1.2); }
         }
+
         .shooting-star {
             position: absolute;
             width: 6px;
@@ -72,10 +90,12 @@
             opacity: 0;
             animation: shoot 2s ease-in-out forwards;
         }
+
         @keyframes shoot {
             from { transform: translate(-50px, -50px); opacity: 1; }
             to { transform: translate(300px, 300px); opacity: 0; }
         }
+
         .counter {
             font-size: 18px;
             margin-top: 10px;
@@ -85,11 +105,13 @@
 </head>
 <body>
     <div class="envelope" onclick="openEnvelope()"></div>
+
     <div class="message-card" id="instructions">
         <h2>✨ Оддыг дарж алга болгоорой ✨</h2>
         <p>P.S. Дарах од болгон дээрээ хүслээ бодох ёстой шүү</p>
         <p class="counter" id="starCounter"></p>
     </div>
+
     <div class="message-card" id="message" style="display: none;">
         <p>✨ Bibbidi-Bobbidi-Boo ✨<br> Би бодсон хүслүүдийг чинь биелүүлдэг шившлэг хийчихсэн байгаа.💫</p>
         <h1>Онцгой өдөр төрсөн Номин эгчдээ төрсөн өдрийн мэнд хүргэе! 🎉</h1>
@@ -112,8 +134,12 @@
             for (let i = 0; i < totalStars; i++) {
                 let star = document.createElement("div");
                 star.classList.add("star");
-                star.style.left = `${Math.random() * window.innerWidth * 0.9}px`;
-                star.style.top = `${Math.random() * window.innerHeight * 0.9}px`;
+
+                // Ensure stars stay inside the viewport
+                let padding = 30;
+                star.style.left = `${Math.random() * (window.innerWidth - padding)}px`;
+                star.style.top = `${Math.random() * (window.innerHeight - padding)}px`;
+
                 star.onclick = () => collectStar(star);
                 document.body.appendChild(star);
             }
