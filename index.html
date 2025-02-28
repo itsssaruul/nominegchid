@@ -6,13 +6,7 @@
     <title>Номин эгчид зориулав</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        
         body {
             display: flex;
             justify-content: center;
@@ -25,8 +19,8 @@
             text-align: center;
             overflow: hidden;
             position: relative;
+            padding: 20px;
         }
-
         .envelope {
             width: 220px;
             height: 160px;
@@ -34,8 +28,8 @@
             position: relative;
             cursor: pointer;
             transition: transform 0.5s;
+            z-index: 10;
         }
-
         .envelope::before {
             content: '';
             position: absolute;
@@ -46,7 +40,6 @@
             background: #ff6b81;
             clip-path: polygon(0 0, 100% 0, 50% 60%);
         }
-
         .message-card {
             display: none;
             background: linear-gradient(135deg, #ffe0e9, #ffd1dc);
@@ -55,65 +48,51 @@
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(255, 182, 193, 0.5);
             max-width: 90vw;
-            width: 350px;
             text-align: center;
             border: 2px solid #ffafbd;
-
-            /* Centering Fix */
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 10;
         }
-
         .star {
             position: absolute;
-            width: 12px;
-            height: 12px;
-            background: white;
-            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/2/29/Gold_Star.svg');
+            background-size: cover;
             cursor: pointer;
             animation: twinkle 2s infinite;
+            z-index: 10;
         }
-
         @keyframes twinkle {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; transform: scale(1.2); }
         }
-
-        .shooting-star {
+        .floating-emoji {
             position: absolute;
-            width: 6px;
-            height: 6px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            animation: shoot 2s ease-in-out forwards;
+            font-size: 24px;
+            animation: float 5s linear infinite;
+            opacity: 0.7;
+            z-index: 1;
+            display: none;
         }
-
-        @keyframes shoot {
-            from { transform: translate(-50px, -50px); opacity: 1; }
-            to { transform: translate(300px, 300px); opacity: 0; }
-        }
-
-        .counter {
-            font-size: 18px;
-            margin-top: 10px;
-            font-weight: 600;
+        @keyframes float {
+            from { transform: translateY(100vh); opacity: 0; }
+            to { transform: translateY(-10vh); opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="envelope" onclick="openEnvelope()"></div>
-
     <div class="message-card" id="instructions">
         <h2>✨ Оддыг дарж алга болгоорой ✨</h2>
         <p>P.S. Дарах од болгон дээрээ хүслээ бодох ёстой шүү</p>
         <p class="counter" id="starCounter"></p>
     </div>
-
     <div class="message-card" id="message" style="display: none;">
-        <p>✨ Bibbidi-Bobbidi-Boo ✨<br> Би бодсон хүслүүдийг чинь биелүүлдэг шившлэг хийчихсэн байгаа.</p>
+        <p>✨ Bibbidi-Bobbidi-Boo ✨<br> Би бодсон хүслүүдийг чинь биелүүлдэг шившлэг хийчихсэн байгаа.💫</p>
         <h1>Онцгой өдөр төрсөн Номин эгчдээ төрсөн өдрийн мэнд хүргэе! 🎉</h1>
         <p>Үргэлж дулаахан мэдрэмж мэдрүүлдэгт баярлалаа.<br>💖 Зөндөө хайртай шүү 💖</p>
     </div>
@@ -130,16 +109,13 @@
 
         function createStars() {
             totalStars = Math.floor(Math.random() * 11) + 5;
+            collectedStars = 0;
             updateCounter();
             for (let i = 0; i < totalStars; i++) {
                 let star = document.createElement("div");
                 star.classList.add("star");
-
-                // Ensure stars stay inside the viewport
-                let padding = 30;
-                star.style.left = `${Math.random() * (window.innerWidth - padding)}px`;
-                star.style.top = `${Math.random() * (window.innerHeight - padding)}px`;
-
+                star.style.left = `${Math.random() * window.innerWidth * 0.9}px`;
+                star.style.top = `${Math.random() * window.innerHeight * 0.9}px`;
                 star.onclick = () => collectStar(star);
                 document.body.appendChild(star);
             }
@@ -150,8 +126,9 @@
             collectedStars++;
             updateCounter();
             if (collectedStars >= totalStars) {
-                showMessage();
-                createShootingStar();
+                document.getElementById('instructions').style.display = 'none';
+                document.getElementById('message').style.display = 'block';
+                createFloatingEmojis();
             }
         }
 
@@ -159,18 +136,16 @@
             document.getElementById('starCounter').innerText = `Үлдсэн од: ${totalStars - collectedStars}`;
         }
 
-        function showMessage() {
-            document.getElementById('instructions').style.display = 'none';
-            document.getElementById('message').style.display = 'block';
-        }
-
-        function createShootingStar() {
-            let shootingStar = document.createElement("div");
-            shootingStar.classList.add("shooting-star");
-            shootingStar.style.left = "50px";
-            shootingStar.style.top = "50px";
-            document.body.appendChild(shootingStar);
-            setTimeout(() => { shootingStar.remove(); }, 2000);
+        function createFloatingEmojis() {
+            for (let i = 0; i < 20; i++) {
+                let emoji = document.createElement("div");
+                emoji.classList.add("floating-emoji");
+                emoji.innerText = ["✨", "💖", "🎀", "🌸", "🌟"][Math.floor(Math.random() * 5)];
+                emoji.style.left = `${Math.random() * 100}vw`;
+                emoji.style.animationDuration = `${Math.random() * 5 + 3}s`;
+                document.body.appendChild(emoji);
+                emoji.style.display = 'block';
+            }
         }
     </script>
 </body>
